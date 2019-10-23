@@ -12,7 +12,7 @@
       "name": "T2",
       "daily": false,
       "weekly": true,
-      "repeated": true
+      "repeated": false
     }
   }
 ]

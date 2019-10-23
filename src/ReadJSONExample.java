@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,7 +13,8 @@ import org.json.simple.parser.ParseException;
 public class ReadJSONExample {
 
   public static void main(String[] args) {
-    JSONParser jsonParser = new JSONParser();
+
+    final JSONParser jsonParser = new JSONParser();
 
     try (FileReader reader = new FileReader("tasks.json")) {
 
@@ -32,15 +34,11 @@ public class ReadJSONExample {
     }
   }
 
-  private static void parseTasksObject(JSONObject task) {
 
-    JSONObject taskObject = (JSONObject) task.get("task");
 
-    Calendar date = Calendar.getInstance();
-    date.set(Calendar.HOUR, 7);
-    date.set(Calendar.MINUTE,0 );
-    date.set(Calendar.SECOND, 0);
-    date.set(Calendar.MILLISECOND, 0);
+  private static void parseTasksObject(final JSONObject task) {
+
+    final JSONObject taskObject = (JSONObject) task.get("task");
 
     String taskName = (String) taskObject.get("name");
     boolean daily = (Boolean) taskObject.get("daily");
@@ -49,19 +47,47 @@ public class ReadJSONExample {
 
     Timer timer = new Timer();
 
- /*   if (daily){
-    //  timer.scheduleAtFixedRate( new SchedulatedTask(taskName), date.getTime(), 1000 * 60 * 60 * 24   );
-      timer.scheduleAtFixedRate( new SchedulatedTask(taskName), 0, 1000  );
-    }*/
 
-    if (weekly){
-   //   timer.scheduleAtFixedRate( new SchedulatedTask(taskName), date.getTime(), 1000 * 60 * 60 * 24 * 7   );
-   //   timer.scheduleAtFixedRate( new SchedulatedTask(taskName), 0, 5000  );
-      timer.scheduleAtFixedRate( new SchedulatedTask(taskName), 0, 5000  );
-
+    //excute task daily repetively every 1 hour
+    if (daily) {
+      if (repeated) {
+        TimerTask timerTask = new TimerTask() {
+          public void run() {
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new SchedulatedTask(taskName), 0, 1000 * 60 * 60);
+          }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1000 * 60 * 60 * 24);
+      } else {
+        timer.scheduleAtFixedRate(new SchedulatedTask(taskName), 0, 1000 * 60 * 60 * 24);
+      }
     }
 
 
+    //excute task weekly in hour 7
+    if (weekly) {
+
+      final Calendar date = Calendar.getInstance();
+      date.set(Calendar.HOUR, 7);
+      date.set(Calendar.MINUTE, 0);
+      date.set(Calendar.SECOND, 0);
+      date.set(Calendar.MILLISECOND, 0);
+
+      if (repeated) {
+
+        TimerTask timerTask = new TimerTask() {
+          public void run() {
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new SchedulatedTask(taskName), 0, 1000 * 60 * 60);
+          }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1000 * 60 * 60 * 24 * 7);
+      } else {
+        timer.scheduleAtFixedRate(new SchedulatedTask(taskName), date.getTime(), 1000 * 60 * 60 * 24 * 7);
+      }
+    }
 
   }
+
+
 }
