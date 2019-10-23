@@ -58,6 +58,7 @@ public class ReadJSONExample {
    //   timer.scheduleAtFixedRate( new SchedulatedTask(taskName), date.getTime(), 1000 * 60 * 60 * 24 * 7   );
    //   timer.scheduleAtFixedRate( new SchedulatedTask(taskName), 0, 5000  );
       timer.scheduleAtFixedRate( new SchedulatedTask(taskName), 0, 5000  );
+
     }
 
 
